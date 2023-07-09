@@ -1,15 +1,27 @@
+import newbank.server.NewBankServer;
+import newbank.client.ExampleClient;
+import java.io.IOException;
+import java.net.UnknownHostException;
+
 public class Main {
     public static void main(String[] args) {
-        System.out.println("Hello, Welcome to NewBank."); //Test Output
+        System.out.println("Hello, Welcome to NewBank."); // Test Output
 
+        // Start the NewBankServer
+        try {
+            new NewBankServer(14002).start();
+            System.out.println("New Bank Server started on port 14002.");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-        // Use classes from the server subfolder
-        // E.g. Account account = new Account();
-   
-
-        // Use classes from the client subfolder
-        // E.g. ExampleClient exampleClient = new ExampleClient();
-
-
+        // Start the ExampleClient
+        try {
+            new ExampleClient("localhost", 14002).start();
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

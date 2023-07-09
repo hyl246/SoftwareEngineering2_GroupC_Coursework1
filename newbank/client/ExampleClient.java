@@ -50,8 +50,8 @@ public class ExampleClient extends Thread{
 			}
 		}
 	}
-	
-	public static void main(String[] args) throws UnknownHostException, IOException, InterruptedException {
-		new ExampleClient("localhost",14002).start();
-	}
+ 	// Implemented in Main Class
+	// public static void main(String[] args) throws UnknownHostException, IOException, InterruptedException {
+	// 	new ExampleClient("localhost",14002).start();
+	// }
 }

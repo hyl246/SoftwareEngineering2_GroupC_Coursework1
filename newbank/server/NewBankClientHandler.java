@@ -33,12 +33,30 @@ public class NewBankClientHandler extends Thread{
 			CustomerID customer = bank.checkLogInDetails(userName, password);
 			// if the user is authenticated then get requests from the user and process them 
 			if(customer != null) {
-				out.println("Log In Successful. What do you want to do?");
+				out.println("Log In Successful. What do you want to do?\n");
+				out.println("Select an option and type a command: \n For example, type SHOWMYACOUNTS to show your accounts.\n");
+				out.println("1. SHOWMYACCOUNTS - Show my accounts");
+				out.println("2. NEWACCOUNT - Create new account (Savings/Checking)");
+				out.println("3. MOVE - Transfer money to other accounts");
+				out.println("4. QUIT\n");
 				while(true) {
 					String request = in.readLine();
+					if(request.equals("QUIT")){
+						out.println("*  Thank you for using NewBank  *\n Have a good day");
+						System.exit(0);
+					}
 					System.out.println("Request from " + customer.getKey());
 					String responce = bank.processRequest(customer, request);
 					out.println(responce);
+					out.println("Continue to other service, select an option and type a command: \n");
+					out.println("1. SHOWMYACCOUNTS - Show my accounts");
+					out.println("2. NEWACCOUNT - Create new account (Savings/Checking)");
+					out.println("3. MOVE - Transfer money to other accounts");
+					out.println("4. QUIT\n");
+					if(request.equals("QUIT")){
+						out.println("*  Thank you for using NewBank  *\n Have a good day");
+						System.exit(0);
+					}
 				}
 			}
 			else {

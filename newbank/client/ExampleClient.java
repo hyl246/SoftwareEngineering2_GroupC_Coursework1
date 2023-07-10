@@ -1,4 +1,4 @@
-package newbank.client;
+package client;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -26,6 +26,14 @@ public class ExampleClient extends Thread{
 					while(true) {
 						String responce = bankServerIn.readLine();
 						System.out.println(responce);
+						if(responce.equals("EXIT")) {
+							try {
+								server.close();
+							} catch (IOException e) {
+								System.err.println("Could not close port: 14002.");
+								System.exit(1);
+							}
+						}	
 					}
 				} catch (IOException e) {
 					e.printStackTrace();
@@ -43,6 +51,14 @@ public class ExampleClient extends Thread{
 				while(true) {
 					String command = userInput.readLine();
 					bankServerOut.println(command);
+					if(command.equals("EXIT")) {
+						try {
+							server.close();
+						} catch (IOException e) {
+							System.err.println("Could not close port: 14002.");
+							System.exit(1);
+						}
+					}	
 				}				
 			} catch (IOException e) {
 				// TODO Auto-generated catch block

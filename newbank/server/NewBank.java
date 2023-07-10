@@ -1,4 +1,4 @@
-package newbank.server;
+package server;
 
 import java.util.HashMap;
 
@@ -51,5 +51,8 @@ public class NewBank {
 	private String showMyAccounts(CustomerID customer) {
 		return (customers.get(customer.getKey())).accountsToString();
 	}
+
+
+
 
 }

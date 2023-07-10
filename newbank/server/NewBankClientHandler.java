@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 
 public class NewBankClientHandler extends Thread{
 	
@@ -57,10 +59,7 @@ public class NewBankClientHandler extends Thread{
 				if(customer != null) {
 					out.println("Log In Successful. What do you want to do?\n");
 					out.println("Select an option and type a command: \n For example, type SHOWMYACOUNTS to show your accounts.\n");
-					out.println("1. SHOWMYACCOUNTS - Show my accounts");
-					out.println("2. NEWACCOUNT - Create new account (Savings/Checking)");
-					out.println("3. MOVE - Transfer money to other accounts");
-					out.println("4. QUIT\n");
+					Commands();
 					while(true) {
 						String request = in.readLine();
 						if(request.equals("QUIT")){
@@ -71,10 +70,7 @@ public class NewBankClientHandler extends Thread{
 						String responce = bank.processRequest(customer, request);
 						out.println(responce);
 						out.println("Continue to other service, select an option and type a command: \n");
-						out.println("1. SHOWMYACCOUNTS - Show my accounts");
-						out.println("2. NEWACCOUNT - Create new account (Savings/Checking)");
-						out.println("3. MOVE - Transfer money to other accounts");
-						out.println("4. QUIT\n");
+						Commands();
 						if(request.equals("QUIT")){
 							out.println("*  Thank you for using NewBank  *\n Have a good day");
 							System.exit(0);
@@ -106,6 +102,18 @@ public class NewBankClientHandler extends Thread{
 				Thread.currentThread().interrupt();
 			}
 		}
+	}
+
+	private void Commands() {
+		List<String> commands = new ArrayList<>();
+        commands.add("1. SHOWMYACCOUNTS - Show my accounts");
+        commands.add("2. NEWACCOUNT - Create new account (Savings/Checking)");
+        commands.add("3. MOVE - Transfer money to other accounts");
+        commands.add("4. QUIT\n");
+        for (String command : commands) {
+            out.println(command);
+            // call method to execute command
+        }
 	}
 
 }

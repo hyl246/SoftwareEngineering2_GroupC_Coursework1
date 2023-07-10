@@ -26,6 +26,14 @@ public class ExampleClient extends Thread{
 					while(true) {
 						String responce = bankServerIn.readLine();
 						System.out.println(responce);
+						if(responce.equals("EXIT")) {
+							try {
+								server.close();
+							} catch (IOException e) {
+								System.err.println("Could not close port: 14002.");
+								System.exit(1);
+							}
+						}	
 					}
 				} catch (IOException e) {
 					e.printStackTrace();
@@ -43,6 +51,14 @@ public class ExampleClient extends Thread{
 				while(true) {
 					String command = userInput.readLine();
 					bankServerOut.println(command);
+					if(command.equals("EXIT")) {
+						try {
+							server.close();
+						} catch (IOException e) {
+							System.err.println("Could not close port: 14002.");
+							System.exit(1);
+						}
+					}	
 				}				
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -50,8 +66,8 @@ public class ExampleClient extends Thread{
 			}
 		}
 	}
-	
-	public static void main(String[] args) throws UnknownHostException, IOException, InterruptedException {
-		new ExampleClient("localhost",14002).start();
-	}
+ 	// Implemented in Main Class
+	// public static void main(String[] args) throws UnknownHostException, IOException, InterruptedException {
+	// 	new ExampleClient("localhost",14002).start();
+	// }
 }

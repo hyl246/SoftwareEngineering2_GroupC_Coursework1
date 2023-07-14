@@ -94,16 +94,13 @@ public class NewBank {
 						System.out.println("Your updated account balance:\n");
 						return showMyAccounts(customer);
 					}
-					if(!status){
-						System.out.println("FAIL\n");
-					}
 				} catch(NumberFormatException e) {
 					System.out.println("FAIL\n");
 				}			
 			default : return "FAIL";
 			}
 		}
-		return "FAIL";
+		return "";
 	}
 	
 	private String showMyAccounts(CustomerID customer) {
@@ -115,6 +112,7 @@ public class NewBank {
 	private boolean MOVE_MONEY(CustomerID customer, String amount, String from , String to) {
 
 		//Initial status for accounts
+		int return_status=0;
 		boolean status_from=false;
 		boolean status_to=false;
 		Double amount_to_num;
@@ -126,22 +124,23 @@ public class NewBank {
 			amount_to_num = Double.parseDouble(amount);
 			if(amount_to_num<0){
 				System.out.println("Invalid amount entered. Amount should be larger than 0.\n");
-				return false;
+				return_status=1;
 			}
 			//Check if the amount is up to 2 decimal places
 			if((BigDecimal.valueOf(amount_to_num).scale() > 2)){
 				System.out.println("Invalid amount entered, give your amount to 2 decimal places.\n");
-				return false;
+				return_status=1;
 			}
 		} catch(NumberFormatException e) {
 			System.out.println("Invalid amount entered.\n");
+			return_status=1;
 			return false;
 		}
 
 		//Check if the input accounts from and to are the same
 		if (from.equals(to)){
 			System.out.println("Invalid account entered. Cannot transfer money within the same account name.\n");
-			return false;
+			return_status=1;
 		}			
 		
 		//Check if the accounts exist
@@ -153,10 +152,14 @@ public class NewBank {
 				status_to=true;
 			}
 		}
-		if (!status_from | !status_to) {
-			System.out.println("Account(s) does not exist.");
-			return false;
+		if (!status_from) {
+			System.out.println(from + " Account does not exist.");
+			return_status=1;
 		}
+		if (!status_to) {
+			System.out.println(to + " Account does not exist.");
+			return_status=1;
+		}		
 
 		//Check if 'from' account has sufficient money
 		//Move money from account "from" to account "to"
@@ -166,7 +169,7 @@ public class NewBank {
 				a.credit_balance(amount_to_num);
 				}
 				else{
-				return false;
+				return_status=1;
 				}
 			}
 			if(a.getAccountName().equals(to)){
@@ -177,6 +180,12 @@ public class NewBank {
 				}
 			}
 		}
-		return true;
+		if(return_status==0){
+			return true;
+		}
+		if(return_status==1){
+			return false;
+		}
+	return true;
 	}
 }

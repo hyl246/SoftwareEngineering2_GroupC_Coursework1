@@ -87,15 +87,15 @@ public class NewBank {
 				try{
 					boolean status = MOVE_MONEY(customer, request_move[1],request_move[2],request_move[3]);
 					if(status){
-						System.out.println("Transfer Successful.");
+						System.out.println("SUCCESS");
 						System.out.println("Your updated account balance:\n");
 						return showMyAccounts(customer);
 					}
 					if(!status){
-						System.out.println("Transfer Unsuccessful.\n");
+						System.out.println("FAIL\n");
 					}
 				} catch(NumberFormatException e) {
-					System.out.println("Transfer Unsuccessful.\n");
+					System.out.println("FAIL\n");
 				}			
 			default : return "FAIL";
 			}
@@ -176,10 +176,4 @@ public class NewBank {
 		}
 		return true;
 	}
-
-	private Customer getCustomer(CustomerID customer) {
-    	TwoValues retrievedValues = customers.get(customer.getKey());
-    	Customer account = retrievedValues.getCustomerValue();
-    return account;
-	}	
 }

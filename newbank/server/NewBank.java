@@ -75,9 +75,12 @@ public class NewBank {
 
 	// commands from the NewBank customer are processed in this method
 	public synchronized String processRequest(CustomerID customer, String request) {
-		String[] request_move = request.split("\\s+");
+		
+		//Split the input request to get different values for Command that has multiple input values
+		String[] request_split = request.split("\\s+");
+
 		if(customers.containsKey(customer.getKey())) {
-			switch(request_move[0]) {
+			switch(request_split[0]) {
 
 			//SHOWMYACCOUNTS Command	
 			case "SHOWMYACCOUNTS" : return showMyAccounts(customer);
@@ -85,7 +88,7 @@ public class NewBank {
 			//MOVE Command
 			case "MOVE" : 
 				try{
-					boolean status = MOVE_MONEY(customer, request_move[1],request_move[2],request_move[3]);
+					boolean status = MOVE_MONEY(customer, request_split[1],request_split[2],request_split[3]);
 					if(status){
 						System.out.println("SUCCESS");
 						System.out.println("Your updated account balance:\n");

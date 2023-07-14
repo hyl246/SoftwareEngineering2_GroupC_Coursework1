@@ -1,6 +1,8 @@
 package server;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Customer {
 	
@@ -9,7 +11,15 @@ public class Customer {
 	public Customer() {
 		accounts = new ArrayList<>();
 	}
-	
+
+	public Account getAccount(int index) {
+        return accounts.get(index);
+    }
+
+    public List<Account> getAccounts() {
+        return accounts;
+    }	
+
 	public String accountsToString() {
 		String s = "";
 		for(Account a : accounts) {
@@ -21,4 +31,5 @@ public class Customer {
 	public void addAccount(Account account) {
 		accounts.add(account);		
 	}
+
 }

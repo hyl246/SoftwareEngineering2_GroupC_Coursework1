@@ -1,5 +1,6 @@
 package server;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 
 public class NewBank {
@@ -76,22 +77,32 @@ public class NewBank {
 
 	// commands from the NewBank customer are processed in this method
 	public synchronized String processRequest(CustomerID customer, String request) {
-		if (customers.containsKey(customer.getKey())) {
-			String[] inputs = request.split(" ");
-			switch (inputs[0]) {
-				case "SHOWMYACCOUNTS":
-					return showMyAccounts(customer);
-				case "NEWACCOUNT":
-					if (inputs.length < 3) {
-						return "FAIL";
+		
+		//Split the input request to get different values for Command that has multiple input values
+		String[] request_split = request.split("\\s+");
+
+		if(customers.containsKey(customer.getKey())) {
+			switch(request_split[0]) {
+
+			//SHOWMYACCOUNTS Command	
+			case "SHOWMYACCOUNTS" : return showMyAccounts(customer);
+
+			//MOVE Command
+			case "MOVE" : 
+				try{
+					boolean status = MOVE_MONEY(customer, request_split[1],request_split[2],request_split[3]);
+					if(status){
+						System.out.println("SUCCESS");
+						System.out.println("Your updated account balance:\n");
+						return showMyAccounts(customer);
 					}
-					return createAccount(customer, inputs[1], Double.parseDouble(inputs[2]),
-							inputs.length == 4 ? inputs[3] : "savings");
-				default:
-					return "FAIL";
+				} catch(NumberFormatException e) {
+					System.out.println("FAIL\n");
+				}			
+			default : return "FAIL";
 			}
 		}
-		return "FAIL";
+		return "";
 	}
 
 	private String showMyAccounts(CustomerID customer) {
@@ -100,15 +111,83 @@ public class NewBank {
 		return account.accountsToString();
 	}
 
-	private String createAccount(CustomerID customer, String accountName, double openingBalance, String accountType) {
-		if (accountName.length() > 30 || !accountName.matches("[a-zA-Z0-9]*") || openingBalance < 50.0) {
-			return "FAIL";
+	private boolean MOVE_MONEY(CustomerID customer, String amount, String from , String to) {
+
+		//Initial status for accounts
+		int return_status=0;
+		boolean status_from=false;
+		boolean status_to=false;
+		Double amount_to_num;
+
+    	TwoValues retrievedValues = customers.get(customer.getKey());
+    	Customer account = retrievedValues.getCustomerValue();
+
+		try {
+			amount_to_num = Double.parseDouble(amount);
+			if(amount_to_num<0){
+				System.out.println("Invalid amount entered. Amount should be larger than 0.\n");
+				return_status=1;
+			}
+			//Check if the amount is up to 2 decimal places
+			if((BigDecimal.valueOf(amount_to_num).scale() > 2)){
+				System.out.println("Invalid amount entered, give your amount to 2 decimal places.\n");
+				return_status=1;
+			}
+		} catch(NumberFormatException e) {
+			System.out.println("Invalid amount entered.\n");
+			return_status=1;
+			return false;
 		}
 
-		Account newAccount = new Account(accountName, accountType, openingBalance);
-		customers.get(customer.getKey()).getCustomerValue().addAccount(newAccount);
-		return "SUCCESS";
+		//Check if the input accounts from and to are the same
+		if (from.equals(to)){
+			System.out.println("Invalid account entered. Cannot transfer money within the same account name.\n");
+			return_status=1;
+		}			
+		
+		//Check if the accounts exist
+		for (Account a : account.getAccounts()) {
+			if (a.getAccountName().equals(from)) {
+				status_from=true;
+			}
+			if (a.getAccountName().equals(to)) {
+				status_to=true;
+			}
+		}
+		if (!status_from) {
+			System.out.println(from + " Account does not exist.");
+			return_status=1;
+		}
+		if (!status_to) {
+			System.out.println(to + " Account does not exist.");
+			return_status=1;
+		}		
 
+		//Check if 'from' account has sufficient money
+		//Move money from account "from" to account "to"
+		for (Account a : account.getAccounts()){
+			if(a.getAccountName().equals(from)){
+				if(a.checkBalance(amount_to_num) == true){
+				a.credit_balance(amount_to_num);
+				}
+				else{
+				return_status=1;
+				}
+			}
+			if(a.getAccountName().equals(to)){
+				if(a.checkBalance(amount_to_num) == true){
+					if(a.getAccountName().equals(to)){
+						a.debit_balance(amount_to_num);
+					}
+				}
+			}
+		}
+		if(return_status==0){
+			return true;
+		}
+		if(return_status==1){
+			return false;
+		}
+	return true;
 	}
-
 }

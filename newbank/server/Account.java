@@ -6,8 +6,8 @@ public class Account {
 	private String accountType; // added this for new accounts to specify the account type
 	private double openingBalance;
 	private double currentBalance;
-	
-	public Account(String accountName, double openingBalance) {
+
+	public Account(String accountName, String accountType, double openingBalance) {
 		this.accountName = accountName;
 		this.accountType = accountType;
 		this.openingBalance = openingBalance;
@@ -18,25 +18,25 @@ public class Account {
 		return (accountName + "(" + accountType + "): " + openingBalance + System.lineSeparator());
 	}
 
-	public String getAccountName(){
+	public String getAccountName() {
 		return accountName;
 	}
 
-	//Method for transfer balance (amount > 0)
-	public void credit_balance(double amount){
+	// Method for transfer balance (amount > 0)
+	public void credit_balance(double amount) {
 		currentBalance = currentBalance - amount;
 		openingBalance = currentBalance;
 	}
 
-	//Method for receiving balance (amount > 0)
-	public void debit_balance(double amount){
+	// Method for receiving balance (amount > 0)
+	public void debit_balance(double amount) {
 		currentBalance = currentBalance + amount;
 		openingBalance = currentBalance;
 	}
 
-	//Method for checking sufficient amount in balance for transfer
-	public boolean checkBalance(double amount){
-		if (amount>openingBalance){
+	// Method for checking sufficient amount in balance for transfer
+	public boolean checkBalance(double amount) {
+		if (amount > openingBalance) {
 			System.out.println("Insufficient amount in account.");
 			return false;
 		}

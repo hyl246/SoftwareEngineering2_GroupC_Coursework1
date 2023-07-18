@@ -59,8 +59,10 @@ public class NewBankClientHandler extends Thread {
 
 				if (customer != null) {
 					out.println("Log In Successful. What do you want to do?\n");
-					out.println("Select an option and type a command: \n\nFor example, type SHOWMYACOUNTS to show your accounts.");
-					out.println("For example, type MOVE 5000 Main Savings to move $5000 from account Main to account Savings.\n");
+					out.println(
+							"Select an option and type a command: \n\nFor example, type SHOWMYACOUNTS to show your accounts.");
+					out.println(
+							"For example, type MOVE 5000 Main Savings to move $5000 from account Main to account Savings.\n");
 					Commands();
 					while (true) {
 						String request = in.readLine();
@@ -68,7 +70,7 @@ public class NewBankClientHandler extends Thread {
 							out.println("*  Thank you for using NewBank  *\n Have a good day");
 							System.exit(0);
 						}
-						System.out.println("Request from " + customer.getKey()+"\n");
+						System.out.println("Request from " + customer.getKey() + "\n");
 						String responce = bank.processRequest(customer, request);
 						out.println(responce);
 						out.println("\n");
@@ -108,14 +110,14 @@ public class NewBankClientHandler extends Thread {
 
 	private void Commands() {
 		List<String> commands = new ArrayList<>();
-        commands.add("1. SHOWMYACCOUNTS - Show my accounts");
-        commands.add("2. NEWACCOUNT - Create new account");
-        commands.add("3. MOVE <Amount> <From> <To> - Transfer money to other accounts");
-        commands.add("4. QUIT\n");
-        for (String command : commands) {
-            out.println(command);
-            // call method to execute command
-        }
+		commands.add("1. SHOWMYACCOUNTS - Show my accounts");
+		commands.add("2. NEWACCOUNT - Create new account");
+		commands.add("3. MOVE <Amount> <From> <To> - Transfer money to other accounts");
+		commands.add("4. QUIT\n");
+		for (String command : commands) {
+			out.println(command);
+			// call method to execute command
+		}
 	}
 
 }

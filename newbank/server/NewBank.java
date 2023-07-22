@@ -150,6 +150,36 @@ public class NewBank {
 		return account.accountsToString();
 	}
 
+	private boolean addMoneyToAccount(CustomerID customerId, String accountName, String ammount) {
+		Double amount_to_num;
+
+		// TODO: Abstract this, duplicated from MOVE_MONEY method
+		try {
+			amount_to_num = Double.parseDouble(amount);
+			if (amount_to_num < 0) {
+				System.out.println("Invalid amount entered. Amount should be larger than 0.\n");
+				return_status = 1;
+			}
+			// Check if the amount is up to 2 decimal places
+			if ((BigDecimal.valueOf(amount_to_num).scale() > 2)) {
+				System.out.println("Invalid amount entered, give your amount to 2 decimal places.\n");
+				return_status = 1;
+			}
+		} catch (NumberFormatException e) {
+			System.out.println("Invalid amount entered.\n");
+			return_status = 1;
+			return false;
+		}
+
+		Customer customer = customers.get(customerId.getKey()).getCustomerValue();
+
+		// Get customer account where name is equal input
+
+		// Add amount to account value
+
+		// Return success
+	}
+
 	private boolean MOVE_MONEY(CustomerID customer, String amount, String from, String to) {
 
 		// Initial status for accounts

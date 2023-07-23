@@ -2,7 +2,6 @@ package server;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
-import java.util.ArrayList; // Added this
 
 public class NewBank {
 
@@ -11,8 +10,6 @@ public class NewBank {
 	// Create a HashMap to store the customers ID as Key and (Account, Password) as
 	// values
 	private HashMap<String, TwoValues> customers;
-	// HashMap to store trusted Payees for each user
-	private HashMap<String, ArrayList<Payee>> trustedPayees = new HashMap<>();
 
 	class TwoValues {
 		private String password;
@@ -30,12 +27,10 @@ public class NewBank {
 		public String getPasswordValue() {
 			return password;
 		}
-
 	}
 
 	private NewBank() {
 		customers = new HashMap<>();
-		trustedPayees = new HashMap<>(); // Initialize the trustedPayee HashMap
 		addTestData();
 	}
 
@@ -80,47 +75,6 @@ public class NewBank {
 		return null;
 	}
 
-	// Add payee method
-	public synchronized String addPayee(String userName, Payee payee) {
-		ArrayList<Payee> userPayees = trustedPayees.get(userName);
-		if (userPayees == null) {
-			userPayees = new ArrayList<>();
-			trustedPayees.put(userName, userPayees);
-		}
-		userPayees.add(payee);
-		return "Payee successfully added";
-	}
-
-	// check if a payee is in the trusted list
-	public synchronized boolean isPayeeTrusted(String userName, Payee payee) {
-		ArrayList<Payee> userPayees = trustedPayees.get(userName);
-		if (userPayees != null) {
-			for (Payee trustedPayee : userPayees) {
-				if (trustedPayee.getBankName().equals(payee.getBankName())
-						&& trustedPayee.getAccountNumber().equals(payee.getAccountNumber())) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-
-	// Set the daily transaction limit for a customer
-	public synchronized String setDailyLimit(String userName, double newLimit) {
-		CustomerID customerID = new CustomerID(userName);
-		Customer customer = getCustomer(customerID);
-		if (customer != null) {
-			customer.setDailyLimit(newLimit);
-			return "Daily limit updated successfully.";
-		} else {
-			return "Invalid customer.";
-		}
-	}
-
-	private Customer getCustomer(CustomerID customerID) {
-		return null;
-	}
-
 	// commands from the NewBank customer are processed in this method
 	public synchronized String processRequest(CustomerID customer, String request) {
 
@@ -138,31 +92,14 @@ public class NewBank {
 				// MOVE Command
 				case "MOVE":
 					try {
-						// Parse the amount from the request
-						double amount = Double.parseDouble(request_split[3]);
-
-						TwoValues customerInfo = customers.get(customer.getKey());
-						Customer customerObject = null;
-						if (customerInfo != null) {
-							customerObject = customerInfo.getCustomerValue();
-						}
-
-						if (customerObject != null && customerObject.exceedsDailyLimit(amount)) {
-							return "FAIL: Transaction failed, amount exceeds daily limit.";
+						boolean status = MOVE_MONEY(customer, request_split[1], request_split[2], request_split[3]);
+						if (status) {
+							System.out.println("SUCCESS");
+							System.out.println("Your updated account balance:\n");
+							return showMyAccounts(customer);
 						} else {
-
-							// proceed with transaction
-							boolean status = MOVE_MONEY(customer, request_split[1], request_split[2], request_split[3]);
-							if (status) {
-								System.out.println("SUCCESS");
-								System.out.println("Your updated account balance:\n");
-								customerObject.updateDailyLimit(amount);
-								return showMyAccounts(customer);
-							} else {
-								return "FAIL";
-							}
+							return "FAIL";
 						}
-
 					} catch (NumberFormatException e) {
 						System.out.println("FAIL\n");
 						return "FAIL";
@@ -170,7 +107,6 @@ public class NewBank {
 
 					// NEW ACCOUNT command
 				case "NEWACCOUNT":
-					System.out.println("To create a new account, type: NEWACCOUNT <Desired username>");
 					if (request_split.length < 4) {
 						return "FAIL";
 					}

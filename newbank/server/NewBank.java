@@ -105,6 +105,21 @@ public class NewBank {
 						return "FAIL";
 					}
 
+					case "ADDMONEYTOACCOUNT":
+					try {
+						boolean status = addMoneyToAccount(customer, request_split[1], request_split[2]);
+						if (status) {
+							System.out.println("SUCCESS");
+							System.out.println("Your updated account balance:\n");
+							return showMyAccounts(customer);
+						} else {
+							return "FAIL";
+						}
+					} catch (NumberFormatException e) {
+						System.out.println("FAIL\n");
+						return "FAIL";
+					}
+
 					// NEW ACCOUNT command
 				case "NEWACCOUNT":
 					if (request_split.length < 4) {
@@ -156,28 +171,31 @@ public class NewBank {
 		// TODO: Abstract this, duplicated from MOVE_MONEY method
 		try {
 			amount_to_num = Double.parseDouble(amount);
+
 			if (amount_to_num < 0) {
 				System.out.println("Invalid amount entered. Amount should be larger than 0.\n");
-				return_status = 1;
+				return false;
 			}
 			// Check if the amount is up to 2 decimal places
 			if ((BigDecimal.valueOf(amount_to_num).scale() > 2)) {
 				System.out.println("Invalid amount entered, give your amount to 2 decimal places.\n");
-				return_status = 1;
+				return false;
 			}
 		} catch (NumberFormatException e) {
 			System.out.println("Invalid amount entered.\n");
-			return_status = 1;
 			return false;
 		}
 
 		Customer customer = customers.get(customerId.getKey()).getCustomerValue();
 
-		// Get customer account where name is equal input
+		for (Account a : customer.getAccounts()) {
+			if (a.getAccountName().equals(accountName)) {
+				a.credit_balance(amount_to_num);
+				return true;
+			}
+		}
 
-		// Add amount to account value
-
-		// Return success
+		return false;
 	}
 
 	private boolean MOVE_MONEY(CustomerID customer, String amount, String from, String to) {

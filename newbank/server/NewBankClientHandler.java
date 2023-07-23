@@ -113,6 +113,8 @@ public class NewBankClientHandler extends Thread {
 		commands.add("1. SHOWMYACCOUNTS - Show my accounts");
 		commands.add("2. NEWACCOUNT - Create new account");
 		commands.add("3. MOVE <Amount> <From> <To> - Transfer money to other accounts");
+		commands.add("4. ADDMONEYTOACCOUNT <To> <Amount> - Add money to an account");
+		commands.add("5. SUBTRACTFROMACCOUNT <From> <Amount> - Remove money from an account");
 		commands.add("4. QUIT\n");
 		for (String command : commands) {
 			out.println(command);

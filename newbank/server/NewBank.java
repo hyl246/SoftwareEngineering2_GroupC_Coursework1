@@ -33,6 +33,30 @@ public class NewBank {
 
 	}
 
+	public static String isValidPassword(String password) {
+		if (password.length() < 12) {
+			return "Password must have at least 12 characters";
+		}
+
+		if (!password.matches(".*\\d.*")) {
+			return "Password must contain at least one digit";
+		}
+
+		if (!password.matches(".*[a-z].*")) {
+			return "Password must contain at least one lowercase letter";
+		}
+
+		if (!password.matches(".*[A-Z].*")) {
+			return "Password must contain at least one uppercase letter";
+		}
+
+		if (!password.matches(".*[!@#$%^&*()].*")) {
+			return "Password must contain at least one special character";
+		}
+
+		return "Password is valid";
+	}
+
 	private NewBank() {
 		customers = new HashMap<>();
 		trustedPayees = new HashMap<>(); // Initialize the trustedPayee HashMap
@@ -168,7 +192,7 @@ public class NewBank {
 						return "FAIL";
 					}
 
-					case "ADDMONEYTOACCOUNT":
+				case "ADDMONEYTOACCOUNT":
 					try {
 						boolean status = addMoneyToAccount(customer, request_split[1], request_split[2]);
 						if (status) {

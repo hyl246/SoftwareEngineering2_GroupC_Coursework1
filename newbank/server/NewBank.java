@@ -183,6 +183,21 @@ public class NewBank {
 						return "FAIL";
 					}
 
+					case "SUBTRACTMONEYFROMACCOUNT":
+					try {
+						boolean status = subtractMoneyFromAccount(customer, request_split[1], request_split[2]);
+						if (status) {
+							System.out.println("SUCCESS");
+							System.out.println("Your updated account balance:\n");
+							return showMyAccounts(customer);
+						} else {
+							return "FAIL";
+						}
+					} catch (NumberFormatException e) {
+						System.out.println("FAIL\n");
+						return "FAIL";
+					}
+
 					// NEW ACCOUNT command
 				case "NEWACCOUNT":
 					System.out.println("To create a new account, type: NEWACCOUNT <Desired username>");
@@ -229,7 +244,7 @@ public class NewBank {
 		return account.accountsToString();
 	}
 
-	private boolean addMoneyToAccount(CustomerID customerId, String accountName, String ammount) {
+	private boolean subtractMoneyFromAccount(CustomerID customerId, String accountName, String amount) {
 		Double amount_to_num;
 
 		// TODO: Abstract this, duplicated from MOVE_MONEY method
@@ -261,6 +276,41 @@ public class NewBank {
 
 		return false;
 	}
+
+	private boolean addMoneyToAccount(CustomerID customerId, String accountName, String amount) {
+		Double amount_to_num;
+
+		// TODO: Abstract this, duplicated from MOVE_MONEY method
+		try {
+			amount_to_num = Double.parseDouble(amount);
+
+			if (amount_to_num < 0) {
+				System.out.println("Invalid amount entered. Amount should be larger than 0.\n");
+				return false;
+			}
+			// Check if the amount is up to 2 decimal places
+			if ((BigDecimal.valueOf(amount_to_num).scale() > 2)) {
+				System.out.println("Invalid amount entered, give your amount to 2 decimal places.\n");
+				return false;
+			}
+		} catch (NumberFormatException e) {
+			System.out.println("Invalid amount entered.\n");
+			return false;
+		}
+
+		Customer customer = customers.get(customerId.getKey()).getCustomerValue();
+
+		for (Account a : customer.getAccounts()) {
+			if (a.getAccountName().equals(accountName)) {
+				a.debit_balance(amount_to_num);
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+
 
 	private boolean MOVE_MONEY(CustomerID customer, String amount, String from, String to) {
 

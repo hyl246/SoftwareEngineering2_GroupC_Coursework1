@@ -54,10 +54,10 @@ public class NewBankClientHandler extends Thread {
 				out.println("Checking Details...");
 				// authenticate user and get customer ID token from bank for use in subsequent
 				// requests
-				CustomerID customer = bank.checkLogInDetails(userName, password);
+				CustomerID customerId = bank.checkLogInDetails(userName, password);
 				// if the user is authenticated then get requests from the user and process them
 
-				if (customer != null) {
+				if (customerId != null) {
 					out.println("Log In Successful. What do you want to do?\n");
 					out.println(
 							"Select an option and type a command: \n\nFor example, type SHOWMYACOUNTS to show your accounts.");
@@ -70,8 +70,8 @@ public class NewBankClientHandler extends Thread {
 							out.println("*  Thank you for using NewBank  *\n Have a good day");
 							System.exit(0);
 						}
-						System.out.println("Request from " + customer.getKey() + "\n");
-						String responce = bank.processRequest(customer, request);
+						System.out.println("Request from " + customerId.getKey() + "\n");
+						String responce = bank.processRequest(customerId, request);
 						out.println(responce);
 						out.println("\n");
 						out.println("Continue to other service, select an option and type a command: \n");
@@ -82,7 +82,7 @@ public class NewBankClientHandler extends Thread {
 						}
 					}
 				}
-				if (customer == null) {
+				if (customerId == null) {
 					attempts++;
 					int remaining = 5 - attempts;
 					out.println("Wrong login ID or password.");
@@ -115,7 +115,8 @@ public class NewBankClientHandler extends Thread {
 		commands.add("3. MOVE <Amount> <From> <To> - Transfer money to other accounts");
 		commands.add("4. ADDMONEYTOACCOUNT <To> <Amount> - Add money to an account");
 		commands.add("5. SUBTRACTMONEYFROMACCOUNT <From> <Amount> - Remove money from an account");
-		commands.add("6. QUIT\n");
+		commands.add("6. CREDITLIMITCHECK - Run credit checker and update credit limit on account");
+		commands.add("7. QUIT\n");
 		for (String command : commands) {
 			out.println(command);
 			// call method to execute command

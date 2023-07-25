@@ -55,5 +55,4 @@ public class Account {
 		}
 		return true;
 	}
-
 }

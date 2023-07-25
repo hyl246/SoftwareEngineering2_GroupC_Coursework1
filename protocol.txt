@@ -25,3 +25,6 @@ Returns SUCCESS or FAIL
 SUBTRACTFROMACCOUNT <From> <Amount> 
 e.g. SUBTRACTFROMACCOUNT Main 100
 Returns SUCCESS or FAIL
+
+CREDITLIMITCHECK
+Updates customers credit limit based on questionnaire

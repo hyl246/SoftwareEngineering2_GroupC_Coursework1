@@ -79,7 +79,7 @@ public class ExampleClient extends Thread{
     public ArrayList<LoanRequest> viewLoanRequests() {
         String command = "VIEWMYLOANREQUESTS";
         bankServerOut.println(command);
-        // You need to implement parsing the response from the server to get the loan requests
+        // Need to implement parsing the response from the server to get the loan requests
         // and return them as an ArrayList<LoanRequest>
         // Parse the response here and return the loan requests.
         return new ArrayList<>(); // Placeholder, replace this with the actual loan requests
@@ -89,7 +89,7 @@ public class ExampleClient extends Thread{
 	public ArrayList<LoanRequest> viewAvailableLoanRequests() {
 		String command = "VIEWAVAILABLELOANREQUESTS";
 		bankServerOut.println(command);
-		// You need to implement parsing the response from the server to get the
+		// Need to implement parsing the response from the server to get the
 		// available loan requests
 		// and return them as an ArrayList<LoanRequest>
 		// Parse the response here and return the available loan requests.

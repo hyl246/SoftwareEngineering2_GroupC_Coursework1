@@ -52,6 +52,7 @@ public class NewBank {
 	private NewBank() {
 		customers = new HashMap<>();
 		loanRequests = new HashMap<>();
+		trustedPayees = new HashMap<>(); // Initialize the trustedPayee HashMap
 		addTestData();
 	}
 
@@ -132,11 +133,7 @@ public class NewBank {
 		return "Password is valid";
 	}
 
-	private NewBank() {
-		customers = new HashMap<>();
-		trustedPayees = new HashMap<>(); // Initialize the trustedPayee HashMap
-		addTestData();
-	}
+
 
 	// Revised the test data to include password
 	// Revised the test data to include account type

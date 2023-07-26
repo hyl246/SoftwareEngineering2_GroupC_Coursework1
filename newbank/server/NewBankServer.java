@@ -75,7 +75,7 @@ public class NewBankServer extends Thread{
                 }
                 break;
             // Implement other loan-related commands such as getAvailableLoanRequests, approveLoanRequest, etc.
-            // Here, you would need to access the NewBank's loan-related methods to perform the requested actions.
+            // Need to access the NewBank's loan-related methods to perform the requested actions.
             default:
                 // Handle other commands if needed
                 break;

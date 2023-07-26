@@ -1,6 +1,8 @@
 package client;
 
 public class LoanRequest {
+    private static int nextId = 1;
+    private int id;
     private double loanAmount;
     private String purpose;
     private String status;
@@ -9,6 +11,7 @@ public class LoanRequest {
         this.loanAmount = loanAmount;
         this.purpose = purpose;
         this.status = "Pending"; // Set the initial status as "Pending" when creating a new loan request
+        this.id = nextId++;
     }
 
     // Getters and Setters for the attributes
@@ -36,10 +39,14 @@ public class LoanRequest {
         this.status = status;
     }
 
+    public int getId() {
+        return id;
+    }
+
     // Override toString() to provide a string representation of the LoanRequest object
     @Override
     public String toString() {
-        return "LoanRequest [loanAmount=" + loanAmount + ", purpose=" + purpose + ", status=" + status + "]";
+        return "LoanRequest [id=" + id + ", loanAmount=" + loanAmount + ", purpose=" + purpose + ", status=" + status + "]";
     }
 }
 

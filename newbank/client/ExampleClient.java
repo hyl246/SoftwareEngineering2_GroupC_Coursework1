@@ -6,13 +6,14 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 
 public class ExampleClient extends Thread{
 	
 	private Socket server;
 	private PrintWriter bankServerOut;	
 	private BufferedReader userInput;
-	private Thread bankServerResponceThread;
+	private Thread bankServerResponceThread; // Incorrect naming
 	
 	public ExampleClient(String ip, int port) throws UnknownHostException, IOException {
 		server = new Socket(ip,port);
@@ -66,8 +67,38 @@ public class ExampleClient extends Thread{
 			}
 		}
 	}
- 	// Implemented in Main Class
-	// public static void main(String[] args) throws UnknownHostException, IOException, InterruptedException {
-	// 	new ExampleClient("localhost",14002).start();
-	// }
+
+	// Method to send a loan request to the server
+	public void createLoanRequest(double loanAmount, String purpose) {
+		String command = "CREATELOAN " + loanAmount + " " + purpose;
+		bankServerOut.println(command);
+	}
+
+
+    // Method to retrieve all loan requests for the client
+    public ArrayList<LoanRequest> viewLoanRequests() {
+        String command = "VIEWMYLOANREQUESTS";
+        bankServerOut.println(command);
+        // Need to implement parsing the response from the server to get the loan requests
+        // and return them as an ArrayList<LoanRequest>
+        // Parse the response here and return the loan requests.
+        return new ArrayList<>(); // Placeholder, replace this with the actual loan requests
+    }
+	
+	// Method to retrieve all available loan requests from the server
+	public ArrayList<LoanRequest> viewAvailableLoanRequests() {
+		String command = "VIEWAVAILABLELOANREQUESTS";
+		bankServerOut.println(command);
+		// Need to implement parsing the response from the server to get the
+		// available loan requests
+		// and return them as an ArrayList<LoanRequest>
+		// Parse the response here and return the available loan requests.
+		return new ArrayList<>(); // Placeholder, replace this with the actual available loan requests
+	}
+
+	// Method to approve a loan request received from the server
+	public void approveLoanRequest(LoanRequest loanRequest) {
+		String command = "APPROVELOAN " + loanRequest.getLoanAmount() + " " + loanRequest.getPurpose();
+		bankServerOut.println(command);
+	}	
 }

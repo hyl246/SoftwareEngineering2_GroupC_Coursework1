@@ -2,7 +2,10 @@ package server;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
-import java.util.ArrayList; // Added this
+
+import client.LoanRequest;
+
+import java.util.ArrayList; 
 
 public class NewBank {
 
@@ -13,6 +16,12 @@ public class NewBank {
 	private HashMap<String, TwoValues> customers;
 	// HashMap to store trusted Payees for each user
 	private HashMap<String, ArrayList<Payee>> trustedPayees = new HashMap<>();
+    // HashMap to store LoanRequests
+    private HashMap<String, ArrayList<LoanRequest>> loanRequests;
+
+	public HashMap<String, TwoValues> getCustomers() {
+		return customers;
+	}
 
 	class TwoValues {
 		private String password;
@@ -31,6 +40,73 @@ public class NewBank {
 			return password;
 		}
 
+		public Customer getCustomer() {
+			return name;
+		}
+
+		public String getPassword() {
+			return password;
+		}
+	}
+
+	private NewBank() {
+		customers = new HashMap<>();
+		loanRequests = new HashMap<>();
+		trustedPayees = new HashMap<>(); // Initialize the trustedPayee HashMap
+		addTestData();
+	}
+
+	// Method to create a new loan request for a specific customer
+	public synchronized boolean createLoanRequest(CustomerID customerID, double loanAmount, String purpose) {
+		Customer customer = getCustomer(customerID);
+		if (customer == null) {
+			return false;
+		}
+
+		LoanRequest loanRequest = new LoanRequest(loanAmount, purpose);
+		ArrayList<LoanRequest> customerLoanRequests = loanRequests.getOrDefault(customerID.getKey(), new ArrayList<>());
+		customerLoanRequests.add(loanRequest);
+		loanRequests.put(customerID.getKey(), customerLoanRequests);
+		return true;
+	}
+
+	// Method to retrieve all loan requests for a specific customer
+	public synchronized ArrayList<LoanRequest> getLoanRequests(CustomerID customerID) {
+		return loanRequests.getOrDefault(customerID.getKey(), new ArrayList<>());
+	}
+
+	// Method to retrieve all available loan requests
+	public synchronized ArrayList<LoanRequest> getAvailableLoanRequests() {
+		ArrayList<LoanRequest> availableLoanRequests = new ArrayList<>();
+		for (ArrayList<LoanRequest> requests : loanRequests.values()) {
+			availableLoanRequests.addAll(requests);
+		}
+		return availableLoanRequests;
+	}
+
+	// Method to approve a loan request for a specific customer
+	public synchronized boolean approveLoanRequest(CustomerID customerID, LoanRequest loanRequest) {
+		Customer customer = getCustomer(customerID);
+		if (customer == null) {
+			return false;
+		}
+
+		ArrayList<LoanRequest> customerLoanRequests = loanRequests.getOrDefault(customerID.getKey(), new ArrayList<>());
+		if (!customerLoanRequests.contains(loanRequest)) {
+			return false;
+		}
+
+		loanRequest.setStatus("Approved");
+		return true;
+	}
+
+	private Customer getCustomerDetails(CustomerID customerID) {
+		TwoValues retrievedValues = customers.get(customerID.getKey());
+		if (retrievedValues != null) {
+			return retrievedValues.getCustomer();
+		} else {
+			return null;
+		}
 	}
 
 	public static String isValidPassword(String password) {
@@ -57,11 +133,7 @@ public class NewBank {
 		return "Password is valid";
 	}
 
-	private NewBank() {
-		customers = new HashMap<>();
-		trustedPayees = new HashMap<>(); // Initialize the trustedPayee HashMap
-		addTestData();
-	}
+
 
 	// Revised the test data to include password
 	// Revised the test data to include account type

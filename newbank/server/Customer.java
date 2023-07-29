@@ -3,11 +3,14 @@ package server;
 import java.util.ArrayList;
 import java.util.List;
 
+import client.LoanRequest;
+
 public class Customer {
 	private double dailyLimit = 50000;
 	private double creditLimit = 0;
 
 	private ArrayList<Account> accounts;
+  private ArrayList<LoanRequest> loanRequests; // Attribute for loan requests
 
 	public Customer() {
 		accounts = new ArrayList<>();

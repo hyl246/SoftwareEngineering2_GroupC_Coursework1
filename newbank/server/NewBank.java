@@ -1,11 +1,12 @@
 package server;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.HashMap;
 
 import client.LoanRequest;
 
-import java.util.ArrayList; 
+import java.util.ArrayList;
 
 public class NewBank {
 
@@ -16,8 +17,8 @@ public class NewBank {
 	private HashMap<String, TwoValues> customers;
 	// HashMap to store trusted Payees for each user
 	private HashMap<String, ArrayList<Payee>> trustedPayees = new HashMap<>();
-    // HashMap to store LoanRequests
-    private HashMap<String, ArrayList<LoanRequest>> loanRequests;
+	// HashMap to store LoanRequests
+	private HashMap<String, ArrayList<LoanRequest>> loanRequests;
 
 	public HashMap<String, TwoValues> getCustomers() {
 		return customers;
@@ -124,8 +125,6 @@ public class NewBank {
 		return "Password is valid";
 	}
 
-
-
 	private void addTestData() {
 		Customer bhagy = new Customer();
 		bhagy.addAccount(new Account("Main", "savings", 1000.0));
@@ -194,7 +193,7 @@ public class NewBank {
 	}
 
 	// commands from the NewBank customer are processed in this method
-	public synchronized String processRequest(CustomerID customerId, String request) {
+	public synchronized String processRequest(CustomerID customerId, String request) throws IOException {
 
 		// Split the input request to get different values for Command that has multiple
 		// input values
@@ -284,9 +283,24 @@ public class NewBank {
 					}
 
 				case "CREDITLIMITCHECK":
+				// TODO: Error handling
+					TwoValues customerInfo = customers.get(customerId.getKey());
+					Customer customerObject = null;
+
+					if (customerInfo != null) {
+						customerObject = customerInfo.getCustomerValue();
+					}
+
 					CreditChecker creditChecker = new CreditChecker();
-					creditChecker.runCreditCheck();
-					return "SUCCESS";
+
+					int creditLimit = creditChecker.runCreditCheck();
+
+					if (creditLimit > 0) {
+						customerObject.setCreditLimit(creditChecker.runCreditCheck());
+						return "SUCCESS";
+					}
+
+					return "FAIL";
 
 				default:
 					return "FAIL";

@@ -7,7 +7,7 @@ import client.LoanRequest;
 
 public class Customer {
 	private double dailyLimit = 50000;
-	private double creditLimit = 0;
+	private int creditLimit = 0;
 
 	private ArrayList<Account> accounts;
   private ArrayList<LoanRequest> loanRequests; // Attribute for loan requests
@@ -28,7 +28,7 @@ public class Customer {
 		return creditLimit;
 	}
 
-	public void setCreditLimit(double limit) {
+	public void setCreditLimit(int limit) {
 		creditLimit = limit;
 	}
 

@@ -13,16 +13,17 @@ public class CreditChecker {
     bufferedReader = new BufferedReader(new InputStreamReader(System.in));
   }
 
-  public void runCreditCheck() throws IOException {
+  public int runCreditCheck() throws IOException {
     System.out.println("CREDIT CHECKER");
 
     for (String question : YesNoQuestions()) {
       if (!askAndCheckYesNoQuestion(question)) {
         System.out.println("Sorry you do not qualify for a new credit limit at this time");
+        return 0;
       }
     }
 
-    System.out.println("4. What is your monthly income (£)?");
+    return getNewCreditLimit();
   }
 
   private boolean askAndCheckYesNoQuestion(String question) throws IOException {
@@ -37,6 +38,13 @@ public class CreditChecker {
     return false;
   }
 
+  private int getNewCreditLimit() throws IOException {
+    // TODO: error handling
+    System.out.println("4. What is your monthly income (£)?");
+    String input = bufferedReader.readLine();
+    return Integer.parseInt(input) * 2;
+  }
+
   private List<String> YesNoQuestions() {
     List<String> questions = new ArrayList<>();
 
@@ -46,5 +54,4 @@ public class CreditChecker {
 
     return questions;
   }
-
 }

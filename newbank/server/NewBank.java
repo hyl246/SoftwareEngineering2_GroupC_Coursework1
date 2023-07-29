@@ -100,15 +100,6 @@ public class NewBank {
 		return true;
 	}
 
-	private Customer getCustomerDetails(CustomerID customerID) {
-		TwoValues retrievedValues = customers.get(customerID.getKey());
-		if (retrievedValues != null) {
-			return retrievedValues.getCustomer();
-		} else {
-			return null;
-		}
-	}
-
 	public static String isValidPassword(String password) {
 		if (password.length() < 12) {
 			return "Password must have at least 12 characters";

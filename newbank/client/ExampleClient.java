@@ -25,9 +25,9 @@ public class ExampleClient extends Thread{
 			public void run() {
 				try {
 					while(true) {
-						String responce = bankServerIn.readLine();
-						System.out.println(responce);
-						if(responce.equals("EXIT")) {
+						String response = bankServerIn.readLine();
+						System.out.println(response);
+						if(response.equals("EXIT")) {
 							try {
 								server.close();
 							} catch (IOException e) {

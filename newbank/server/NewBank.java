@@ -1,11 +1,12 @@
 package server;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.HashMap;
-
 import client.LoanRequest;
+import java.util.ArrayList;
+import java.net.Socket;
 
-import java.util.ArrayList; 
 
 public class NewBank {
 
@@ -16,8 +17,8 @@ public class NewBank {
 	private HashMap<String, TwoValues> customers;
 	// HashMap to store trusted Payees for each user
 	private HashMap<String, ArrayList<Payee>> trustedPayees = new HashMap<>();
-    // HashMap to store LoanRequests
-    private HashMap<String, ArrayList<LoanRequest>> loanRequests;
+	// HashMap to store LoanRequests
+	private HashMap<String, ArrayList<LoanRequest>> loanRequests;
 
 	public HashMap<String, TwoValues> getCustomers() {
 		return customers;
@@ -100,15 +101,6 @@ public class NewBank {
 		return true;
 	}
 
-	private Customer getCustomerDetails(CustomerID customerID) {
-		TwoValues retrievedValues = customers.get(customerID.getKey());
-		if (retrievedValues != null) {
-			return retrievedValues.getCustomer();
-		} else {
-			return null;
-		}
-	}
-
 	public static String isValidPassword(String password) {
 		if (password.length() < 12) {
 			return "Password must have at least 12 characters";
@@ -133,29 +125,23 @@ public class NewBank {
 		return "Password is valid";
 	}
 
-
-
-	// Revised the test data to include password
-	// Revised the test data to include account type
 	private void addTestData() {
 		Customer bhagy = new Customer();
 		bhagy.addAccount(new Account("Main", "savings", 1000.0));
 		bhagy.addAccount(new Account("Savings", "savings", 5000.0));
-		String bhagy_pw = "myPassword123";
-		TwoValues values1 = new TwoValues(bhagy, bhagy_pw);
-		customers.put("Bhagy", values1);
+		customers.put("Bhagy", new TwoValues(bhagy, "myPassword123"));
 
 		Customer cindy = new Customer();
 		cindy.addAccount(new Account("Savings", "savings", 1500.0));
-		String cindy_pw = "myPassword123";
-		TwoValues values2 = new TwoValues(cindy, cindy_pw);
-		customers.put("Cindy", values2);
+		customers.put("Cindy", new TwoValues(cindy, "myPassword123"));
 
 		Customer john = new Customer();
 		john.addAccount(new Account("Checking", "current", 250.0));
-		String john_pw = "myPassword123";
-		TwoValues values3 = new TwoValues(john, john_pw);
-		customers.put("John", values3);
+		customers.put("John", new TwoValues(john, "myPassword123"));
+
+		Customer phoebe = new Customer();
+		phoebe.addAccount(new Account("Test", "current", 0.0));
+		customers.put("Phoebe", new TwoValues(phoebe, "ph"));
 	}
 
 	public static NewBank getBank() {
@@ -174,17 +160,6 @@ public class NewBank {
 			return null;
 		}
 		return null;
-	}
-
-	// Add payee method
-	public synchronized String addPayee(String userName, Payee payee) {
-		ArrayList<Payee> userPayees = trustedPayees.get(userName);
-		if (userPayees == null) {
-			userPayees = new ArrayList<>();
-			trustedPayees.put(userName, userPayees);
-		}
-		userPayees.add(payee);
-		return "Payee successfully added";
 	}
 
 	// check if a payee is in the trusted list
@@ -218,18 +193,18 @@ public class NewBank {
 	}
 
 	// commands from the NewBank customer are processed in this method
-	public synchronized String processRequest(CustomerID customer, String request) {
+	public synchronized String processRequest(CustomerID customerId, String request, Socket s) throws IOException {
 
 		// Split the input request to get different values for Command that has multiple
 		// input values
 		String[] request_split = request.split("\\s+");
 
-		if (customers.containsKey(customer.getKey())) {
+		if (customers.containsKey(customerId.getKey())) {
 			switch (request_split[0]) {
 
 				// SHOWMYACCOUNTS Command
 				case "SHOWMYACCOUNTS":
-					return showMyAccounts(customer);
+					return showMyAccounts(customerId);
 
 				// MOVE Command
 				case "MOVE":
@@ -237,7 +212,7 @@ public class NewBank {
 						// Parse the amount from the request
 						double amount = Double.parseDouble(request_split[3]);
 
-						TwoValues customerInfo = customers.get(customer.getKey());
+						TwoValues customerInfo = customers.get(customerId.getKey());
 						Customer customerObject = null;
 						if (customerInfo != null) {
 							customerObject = customerInfo.getCustomerValue();
@@ -248,12 +223,12 @@ public class NewBank {
 						} else {
 
 							// proceed with transaction
-							boolean status = MOVE_MONEY(customer, request_split[1], request_split[2], request_split[3]);
+							boolean status = MOVE_MONEY(customerId, request_split[1], request_split[2], request_split[3]);
 							if (status) {
 								System.out.println("SUCCESS");
 								System.out.println("Your updated account balance:\n");
-								customerObject.updateDailyLimit(amount);
-								return showMyAccounts(customer);
+								customerObject.setDailyLimit(amount);
+								return showMyAccounts(customerId);
 							} else {
 								return "FAIL";
 							}
@@ -266,11 +241,11 @@ public class NewBank {
 
 				case "ADDMONEYTOACCOUNT":
 					try {
-						boolean status = addMoneyToAccount(customer, request_split[1], request_split[2]);
+						boolean status = addMoneyToAccount(customerId, request_split[1], request_split[2]);
 						if (status) {
 							System.out.println("SUCCESS");
 							System.out.println("Your updated account balance:\n");
-							return showMyAccounts(customer);
+							return showMyAccounts(customerId);
 						} else {
 							return "FAIL";
 						}
@@ -279,13 +254,13 @@ public class NewBank {
 						return "FAIL";
 					}
 
-					case "SUBTRACTMONEYFROMACCOUNT":
+				case "SUBTRACTMONEYFROMACCOUNT":
 					try {
-						boolean status = subtractMoneyFromAccount(customer, request_split[1], request_split[2]);
+						boolean status = subtractMoneyFromAccount(customerId, request_split[1], request_split[2]);
 						if (status) {
 							System.out.println("SUCCESS");
 							System.out.println("Your updated account balance:\n");
-							return showMyAccounts(customer);
+							return showMyAccounts(customerId);
 						} else {
 							return "FAIL";
 						}
@@ -302,10 +277,32 @@ public class NewBank {
 					}
 					try {
 						double openingBalance = Double.parseDouble(request_split[3]);
-						return newAccount(customer, request_split[1], request_split[2], openingBalance);
+						return newAccount(customerId, request_split[1], request_split[2], openingBalance);
 					} catch (NumberFormatException e) {
 						return "FAIL: Invalid amount for openingBalance";
 					}
+
+				case "CREDITLIMITCHECK":
+				// TODO: Error handling
+					TwoValues customerInfo = customers.get(customerId.getKey());
+					Customer customerObject = null;
+
+					if (customerInfo != null) {
+						customerObject = customerInfo.getCustomerValue();
+					}
+
+					CreditChecker creditChecker = new CreditChecker(s);
+
+					int creditLimit = creditChecker.runCreditCheck();
+
+					if (creditLimit > 0) {
+						System.out.println("Your new credit limit is: " + creditLimit);
+						customerObject.setCreditLimit(creditLimit);
+						return "SUCCESS";
+					}
+
+					return "FAIL";
+
 				default:
 					return "FAIL";
 			}
@@ -405,8 +402,6 @@ public class NewBank {
 
 		return false;
 	}
-
-
 
 	private boolean MOVE_MONEY(CustomerID customer, String amount, String from, String to) {
 

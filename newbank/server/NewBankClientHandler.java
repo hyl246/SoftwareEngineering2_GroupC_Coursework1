@@ -13,10 +13,12 @@ public class NewBankClientHandler extends Thread {
 	private NewBank bank;
 	private BufferedReader in;
 	private PrintWriter out;
+	private Socket socket;
 
 	public NewBankClientHandler(Socket s) throws IOException {
+		socket = s;
 		bank = NewBank.getBank();
-		in = new BufferedReader(new InputStreamReader(s.getInputStream()));
+		in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 		out = new PrintWriter(s.getOutputStream(), true);
 	}
 
@@ -71,7 +73,7 @@ public class NewBankClientHandler extends Thread {
 							System.exit(0);
 						}
 						System.out.println("Request from " + customerId.getKey() + "\n");
-						String responce = bank.processRequest(customerId, request);
+						String responce = bank.processRequest(customerId, request, socket);
 						out.println(responce);
 						out.println("\n");
 						out.println("Continue to other service, select an option and type a command: \n");

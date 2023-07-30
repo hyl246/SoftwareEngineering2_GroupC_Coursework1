@@ -3,10 +3,10 @@ package server;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.HashMap;
-
 import client.LoanRequest;
-
 import java.util.ArrayList;
+import java.net.Socket;
+
 
 public class NewBank {
 
@@ -193,7 +193,7 @@ public class NewBank {
 	}
 
 	// commands from the NewBank customer are processed in this method
-	public synchronized String processRequest(CustomerID customerId, String request) throws IOException {
+	public synchronized String processRequest(CustomerID customerId, String request, Socket s) throws IOException {
 
 		// Split the input request to get different values for Command that has multiple
 		// input values
@@ -291,12 +291,13 @@ public class NewBank {
 						customerObject = customerInfo.getCustomerValue();
 					}
 
-					CreditChecker creditChecker = new CreditChecker();
+					CreditChecker creditChecker = new CreditChecker(s);
 
 					int creditLimit = creditChecker.runCreditCheck();
 
 					if (creditLimit > 0) {
-						customerObject.setCreditLimit(creditChecker.runCreditCheck());
+						System.out.println("Your new credit limit is: " + creditLimit);
+						customerObject.setCreditLimit(creditLimit);
 						return "SUCCESS";
 					}
 

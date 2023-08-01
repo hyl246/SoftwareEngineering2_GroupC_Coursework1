@@ -124,6 +124,7 @@ public class NewBank {
 
 		return "Password is valid";
 	}
+	
 
 	private void addTestData() {
 		Customer bhagy = new Customer();
@@ -402,6 +403,7 @@ public class NewBank {
 
 		return false;
 	}
+	
 
 	private boolean MOVE_MONEY(CustomerID customer, String amount, String from, String to) {
 
@@ -481,4 +483,34 @@ public class NewBank {
 		}
 		return true;
 	}
+
+	// Method to add a transaction to the transaction history of a specific account
+    // TODO - Fix Type Mismatch
+	public synchronized void addTransaction(CustomerID customerID, String accountNumber, Transaction transaction) {
+		Customer customer = customers.get(customerID.getKey());
+		if (customer != null) {
+			Account account = customer.getAccount(accountNumber);
+			if (account != null) {
+				account.addTransaction(transaction);
+			}
+		}
+	}
+
+	// Method to retrieve transaction history for a specific account
+	// TODO - Fix Type Mismatch
+	public synchronized String showMyTransactions(CustomerID customerID, String accountNumber) {
+		Customer customer = customers.get(customerID.getKey());
+		if (customer != null) {
+			Account account = customer.getAccount(accountNumber);
+			if (account != null) {
+				return account.getTransactions();
+			}
+		}
+		return "Account not found or no transactions available.";
+	}
+
+
+   
+    
 }
+

@@ -1,5 +1,8 @@
 package server;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Account {
 
 	private String accountName;
@@ -7,6 +10,7 @@ public class Account {
 	private double openingBalance;
 	private double currentBalance;
 	private String customerID; // added this for storing the ID of the customer who owns the account
+    private List<Transaction> transactionHistory;
 
 	public Account(String accountName, String accountType, double openingBalance) {
 		this.accountName = accountName;
@@ -14,6 +18,8 @@ public class Account {
 		this.openingBalance = openingBalance;
 		this.currentBalance = openingBalance;
 		this.customerID = null; // initialize customerID as null when creating account as no owner yet
+		this.transactionHistory = new ArrayList<>(); // Initialize transaction history list
+	
 	}
 
 	// Method to read who owns this account
@@ -55,4 +61,16 @@ public class Account {
 		}
 		return true;
 	}
+	
+	// Method to add a transaction to the transaction history
+	public void addTransaction(Transaction transaction) {
+		transactionHistory.add(transaction);
+	}
+
+	// Method to get the transaction history
+	public List<Transaction> getTransactionHistory() {
+		return transactionHistory;
+	}
+
+	
 }

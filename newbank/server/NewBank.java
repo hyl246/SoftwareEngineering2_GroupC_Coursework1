@@ -124,6 +124,7 @@ public class NewBank {
 
 		return "Password is valid";
 	}
+	
 
 	private void addTestData() {
 		Customer bhagy = new Customer();
@@ -402,6 +403,7 @@ public class NewBank {
 
 		return false;
 	}
+	
 
 	private boolean MOVE_MONEY(CustomerID customer, String amount, String from, String to) {
 
@@ -481,4 +483,13 @@ public class NewBank {
 		}
 		return true;
 	}
+
+
+
 }
+
+
+   
+    
+
+

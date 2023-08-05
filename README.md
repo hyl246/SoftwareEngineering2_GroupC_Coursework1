@@ -31,7 +31,11 @@ Users can type the following protocol to perform the service:
 
   e.g. `MOVE 5000 Main Home` transfer $5,000 from account Main to account Home
 
-* `SUBTRACTMONEYFROMACCOUNT <From> <Amount>`
+* `ADDMONEYTOACCOUNT <To> <Amount>` - Add money to account
+
+  e.g. `ADDMONEYTOACCOUNT Main 625` add $625 to account Main
+
+* `SUBTRACTMONEYFROMACCOUNT <From> <Amount>` - Subtract money from account
 
   e.g. `SUBTRACTMONEYFROMACCOUNT Main 625` subtract $625 from account Main
 
@@ -61,6 +65,7 @@ The roles were rorated within the group C members:
     - [x] "SHOWMYACCOUNTS"
     - [x]  "NEWACCOUNT"
     - [x]  "MOVE"
+    - [x]  "ADDMONEYTOACCOUNT"
     - [x]  "SUBTRACTMONEYFROMACCOUNT"
     - [x]  "CREDITLIMITCHECK"
     - [x]  "GETLOANREQUESTS"
